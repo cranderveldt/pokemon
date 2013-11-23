@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SV Info</title>
+    <style>
+    .cf:before,
+    .cf:after {
+        content: " ";
+        display: table;
+    }
+    .cf:after {
+        clear: both;
+    }
+    body { font-size: 16px; line-height: 1.7; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; background: #CCC;}
+    #container { width: 700px; margin: auto; background: #FFF; padding: 20px; border-radius: 4px; margin-top: 20px;}
+    .tsv { width: 60px; display: inline-block; }
+    .fc { width: 150px; display: inline-block;}
+    .ign { width: 130px; display: inline-block;}
+    .pokemon { width: 100px; display: inline-block;}
+    a { display: inline-block; width: 230px; }
+    .requested { color: red; }
+    #eggs {
+        margin-top: 20px;
+        border-top: 1px solid #ccc;
+    }
+    .egg-entry { float: left; width: 16.66666666%; display: block; }
+    .egg-group {
+        padding: 30px 0;
+    }
+    .perfect { color: blue;}
+    .hatched { color: #FFF; }
+    .duplicate { display: none; }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script>
+    jQuery(document).ready(function($){
+        var trainers = [],
+        eggs = [],
+        requested = [615, 186, 3126];
+        var processData = function(data) {
+            data = data.split('\n');
+            for (var d in data) {
+                var temp = data[d].split('|');
+                trainers.push({ "reddit": temp[0] , "tsv": parseInt(temp[3]), "FC": temp[2], "ign": temp[1] });
+            }
+            trainers.push({ "reddit": 'syghefish' , "tsv": 1981, "FC": '', "ign": '' });
+            trainers.push({ "reddit": 'red' , "tsv": 2807, "FC": '', "ign": '' });
+            trainers.push({ "reddit": 'blue' , "tsv": 4089, "FC": '', "ign": '' });
+            trainers.push({ "reddit": 'jordan' , "tsv": 3586, "FC": '', "ign": '' });
+            var printString = '';
+            for (var e in eggs) {
+                for (var t in trainers) {
+                    if (eggs[e].sv === trainers[t].tsv && eggs[e].status !== 'hatched') {
+                        var rowClass = eggs[e].status;
+                        if (trainers[t].tsv === trainers[t-1].tsv) {
+                            rowClass = rowClass + ' duplicate';
+                        }
+                        printString = printString + '<div class="' + rowClass + '"><span class="tsv">' + trainers[t].tsv + '</span><a href="http://www.reddit.com' + trainers[t].reddit + '">' + trainers[t].reddit + '</a><span class="fc">' + trainers[t].FC + '</span><span class="ign">' + trainers[t].ign + '</span><span class="pokemon">' + eggs[e].pokemon + '</a></div>';
+                    }
+                }
+            }
+            $('#trainers').html(printString);
+        };
+        var getEggData = function(data) {
+            var printString = '<div class="egg-group cf">';
+            eggs = data;
+            for (var d in data) {
+                var sv = data[d].sv;
+                if (sv === -1) {
+                    sv = '&nbsp;';
+                }
+                if (d % 30 === 0) {
+                    printString = printString + '</div><h2>' + data[d].pokemon + '</h2><div class="egg-group cf">'
+                }
+                printString = printString + '<div class="egg-entry ' + data[d].status + '">' + sv + '</div>';
+            } 
+            printString = printString + '</div>';
+            $('#eggs').html(printString);
+            $.ajax({
+                url:  'pokelist.txt'
+                , type: 'GET'
+                , isLocal: true
+                , dataType: 'text'
+                , error: function() {
+                    console.log("ajax error");
+                }   
+                , success: processData
+            });
+        };
+        $.ajax({
+            url:  'egglist.json'
+            , type: 'GET'
+            , isLocal: true
+            , dataType: 'json'
+            , error: function() {
+                console.log("ajax error");
+            }   
+            , success: getEggData
+        });
+        $('#show-dupes').on('click', function(){
+            $('.duplicate').toggle();
+        });
+    });
+    /*eggs = [
+        2816, 3441, 615,  3217, 3240, 2691, //froakie
+              936,  3710, 1766,       2847, 
+        1412, 1566, 1752, 574,  1784, 3206,
+        2069, 1148, 702,  3959, 186,  262,
+        643,  3014, 1222, 2430, 1697, 3327
+        ,
+        1745, 3296,       2316, 1177, 1705, // Eevee
+        1994, 408,  2148, 18,   1718, 3647,
+        2187,     , 2901, 1932, 1581, 598,
+        289,  2093, 3618,       1632, 442,
+        2858, 1462, 2589, 2803, 2392, 3126
+    ],*/
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="trainers"></div>
+        <button type="button" id="show-dupes">Toggle Dupes</button>
+        <div id="eggs" class="cf"></div>
+    </div>
+</body>
+</html>

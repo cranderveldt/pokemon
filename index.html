@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>Pokemon Chain Counter</title>
+    <style>
+        *:focus {
+            box-shadow: none;
+            border: 0;
+            outline: none;
+            background: red;
+        }
+        input {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 15px;
+            font-size: 32px;
+            text-align: center;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            box-sizing: border-box;
+            font-size: 32px;
+            background: blue;
+            color: white;
+            font-weight: bold;
+            border: 0;
+        }
+        .increase {
+            padding: 80px 15px;
+        }
+        .wrap {
+            max-width: 400px;
+            margin: auto;
+        }
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        jQuery(document).ready(function($){
+            $('.increase').on('click', function(){
+                $('input').val(parseInt($('input').val()) + 1);
+            });
+            $('.decrease').on('click', function(){
+                $('input').val(parseInt($('input').val()) - 1);
+            });
+            $('.clear').on('click', function(){
+                $('input').val(0);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="wrap">
+        <button class="increase">UP</button>
+        <input type="number" value="0">
+        <button class="decrease">DOWN</button>
+        <button class="clear">CLEAR</button>
+    </div>
+</body>
+</html>
