@@ -1048,5 +1048,10 @@
   "sv":2144,
   "pokemon":"Abra",
   "status":"pending"
+},
+{
+  "sv":2251,
+  "pokemon":"Elekid",
+  "status":"pending"
 }
 ]
